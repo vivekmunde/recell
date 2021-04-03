@@ -247,4 +247,66 @@ describe('recell', () => {
     expect(wrapper.find('#name').text()).toEqual('Two');
     expect(wrapper.find('#address').text()).toEqual('LMN Road, Q Apartment, HTQ, 321');
   });
+
+  test('Should check state type to be a JSON object', () => {
+    expect.hasAssertions();
+
+    const states = [true, 123, 'string', Symbol('S'), [1, 2, 3]];
+
+    states.forEach((state) => {
+      expect(() => {
+        createState(state);
+      }).toThrow(new Error('State must be a JSON object.'));
+    });
+  });
+
+  test('Should check subscriber type to be a function', () => {
+    expect.hasAssertions();
+
+    const cell = createState({});
+
+    const subscriberTypes = [true, 123, 'string', Symbol('S'), [1, 2, 3]];
+
+    subscriberTypes.forEach((subscriber) => {
+      expect(() => {
+        cell.subscribe(subscriber);
+      }).toThrow(new Error('Subscriber must be a function.'));
+    });
+  });
+
+  test('Should check selector type to be a function', () => {
+    expect.hasAssertions();
+
+    const cell = createState({});
+
+    const selectorTypes = [true, 123, 'string', Symbol('S'), [1, 2, 3]];
+
+    const View = (selector) => {
+      let state = {};
+      expect(() => {
+        state = useGetState(cell, selector);
+      }).toThrow(new Error('Selector must be a function.'));
+      return <div>{JSON.stringify(state)}</div>;
+    };
+
+    selectorTypes.forEach((selector) => mount(<View selector={selector} />));
+  });
+
+  test('Should check equality comparer type to be a function', () => {
+    expect.hasAssertions();
+
+    const cell = createState({});
+
+    const comparerTypes = [true, 123, 'string', Symbol('S'), [1, 2, 3]];
+
+    const View = (comparer) => {
+      let state = {};
+      expect(() => {
+        state = useGetState(cell, undefined, comparer);
+      }).toThrow(new Error('Equality comparer must be a function.'));
+      return <div>{JSON.stringify(state)}</div>;
+    };
+
+    comparerTypes.forEach((comparer) => mount(<View comparer={comparer} />));
+  });
 });

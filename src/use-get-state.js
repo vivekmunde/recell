@@ -7,6 +7,13 @@ const useGetState = (cell, selector, areEqual) => {
   const fnSelector = selector ?? defaultSelector;
   const fnAreEqual = areEqual ?? equal;
 
+  if (typeof fnSelector !== 'function') {
+    throw new Error('Selector must be a function.');
+  }
+  if (typeof fnAreEqual !== 'function') {
+    throw new Error('Equality comparer must be a function.');
+  }
+
   const ref = useRef({ state: null });
   const [state, setState] = useState(fnSelector(cell.getState()));
 
