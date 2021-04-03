@@ -1,15 +1,13 @@
 import { createPublication, publish, subscribe } from 'pusu';
 
-const defaultReducer = (newState, oldState) => {
-  return {
-    ...oldState,
-    ...newState,
-  };
-};
+const defaultReducer = (newState, oldState) => ({
+  ...oldState,
+  ...newState,
+});
 
-const createState = (initialState, reducer, name) => {
+const createState = (initialState, reducer) => {
   const fnReducer = reducer ?? defaultReducer;
-  const publication = createPublication(name);
+  const publication = createPublication();
   let currentState = initialState ?? {};
 
   const getState = () => currentState;

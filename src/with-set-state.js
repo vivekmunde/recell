@@ -1,3 +1,4 @@
+import React from 'react';
 import useSetState from './use-set-state';
 
 const fnWithSetState = (Component, cell) => {

@@ -1,3 +1,4 @@
+import React from 'react';
 import useGetState from './use-get-state';
 
 const fnWithGetState = (Component, cell, selector, areEqual) => {

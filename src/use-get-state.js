@@ -16,6 +16,7 @@ const useGetState = (cell, selector, areEqual) => {
     const subscriber = (newState) => {
       const newSelectedState = fnSelector(newState);
       if (!fnAreEqual(ref.current.state, newSelectedState)) {
+        ref.current.state = newSelectedState;
         setState(newSelectedState);
       }
     };
