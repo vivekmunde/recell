@@ -2,13 +2,14 @@
   "name": "recell",
   "version": "0.1.0",
   "description": "Application state management for React",
-  "main": "./index.js",
+  "main": "./lib/cjs/index.js",
+  "module": "./lib/es/index.js",
+  "types": "./lib/es/index.d.ts",
   "scripts": {
-    "build-development": "webpack --config webpack.development.config.js",
-    "build-production": "webpack --config webpack.production.config.js",
-    "build": "npm run build-production && npm run build-development",
-    "clean": "rimraf ./dist",
-    "test": "jest",
+    "build": "npm run clean && npm run compile-ts",
+    "clean": "rimraf ./lib",
+    "compile-ts": "npm run clean && tsc -p tsconfig-esm.json && tsc -p tsconfig-cjs.json",
+    "test": "npm run compile-ts && jest",
     "prepublish": "npm run clean && npm run build"
   },
   "author": "Vivek Munde",
@@ -18,20 +19,20 @@
     "url": "git+https://github.com/vivekmunde/recell.git"
   },
   "files": [
-    "dist",
-    "src",
-    "index.js"
+    "lib",
+    "src"
   ],
   "keywords": [
     "react",
     "reactjs",
-    "redux",
+    "state management",
     "react state management"
   ],
   "homepage": "https://github.com/vivekmunde/recell",
   "peerDependencies": {
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0"
+    "pusu": "^1.1.0",
+    "react": ">= 16.8.0",
+    "react-dom": ">= 16.8.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.8",
@@ -39,18 +40,16 @@
     "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-react": "^7.0.0",
+    "@types/react": "^18.2.33",
     "babel-jest": "^24.8.0",
     "babel-loader": "^8.0.6",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",
-    "jest": "^24.8.0",
-    "react": "^16.9.0",
-    "react-dom": "^16.9.0",
-    "webpack": "^4.39.2",
-    "webpack-cli": "^3.3.7"
-  },
-  "dependencies": {
     "fast-deep-equal": "^3.1.3",
-    "pusu": "^1.0.2"
+    "jest": "^24.8.0",
+    "pusu": "^1.1.0",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
+    "typescript": "^5.2.2"
   }
 }
