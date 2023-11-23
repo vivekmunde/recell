@@ -1,6 +1,6 @@
 import { mount } from "enzyme";
 import areEqual from "fast-deep-equal";
-import React from "react";
+import React, { useEffect } from "react";
 import { Configure, createCell, useGetState, useSetState } from "../lib/es";
 
 describe("recell", () => {
@@ -71,6 +71,30 @@ describe("recell", () => {
     );
 
     expect(wrapper.find("#name1").text()).toEqual("Default");
+  });
+
+  test("Should check if the state being set is not undefined", () => {
+    expect.hasAssertions();
+
+    const userDetailsCell = createCell({ name: "Default" });
+
+    const View1 = () => {
+      const setState = useSetState(userDetailsCell);
+
+      useEffect(() => {
+        expect(() => {
+          setState(() => undefined);
+        }).toThrow(new Error("State cannot be undefined or null."));
+      }, []);
+
+      return <div />;
+    };
+
+    mount(
+      <div>
+        <View1 />
+      </div>
+    );
   });
 
   test("Should update store state and assign the updated state to subscriber components", () => {

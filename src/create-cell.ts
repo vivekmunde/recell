@@ -9,6 +9,11 @@ const createCell = <T>(initialState: T): TCell<T> => {
 
   const setState: TOnSetState<T> = (reducer) => {
     currentState = reducer(currentState);
+
+    if (currentState === undefined || currentState === null) {
+      throw new Error("State cannot be undefined or null.");
+    }
+
     pusu.publish(publication, currentState);
   };
 
@@ -17,7 +22,13 @@ const createCell = <T>(initialState: T): TCell<T> => {
       throw new Error("Subscriber must be a function.");
     }
 
-    return pusu.subscribe(publication, subscriber);
+    return pusu.subscribe(publication, (state) => {
+      if (state === undefined || state === null) {
+        throw new Error("State cannot be undefined or null.");
+      }
+
+      subscriber(state ?? {});
+    });
   };
 
   return {
