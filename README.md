@@ -11,15 +11,15 @@ The state is decentralised and can always stay close and confined to the module/
 # createCell
 Creates a `cell` with the default state and state accessing & updating methods.
 
-#### Type Definition
+### Type Definition
 ```
 type TCreateCell = <T>(initialState: T) => TCell<T>;
 ```
 
-#### Arguments
+### Arguments
 - `state`: A default value of the state. The default value can be `undefined`.
 
-#### Return value
+### Return value
 A cell object having the state accessing & updating methods.
 - `getState`: Function to get the current state.
 - `setState`: Function to set the state.
@@ -27,7 +27,7 @@ A cell object having the state accessing & updating methods.
 
 **Note**: `getState`, `setState` and `subscribe` are core APIs. To get and set state, please use hooks `useGetState` and `useSetState`. `subscribe` can be used for caching, is explained under the caching section.
 
-#### Example
+### Example
 ```
 import { createCell } from 'recell';
 import TState from './types';
@@ -45,20 +45,20 @@ export default dashboardCell;
 # useSetState
 `useSetState` is a hook to update the state of the `cell`.
 
-#### Type Definition
+### Type Definition
 ```
 type TUseSetCell = <T>(cell: TCell<T>) => (reducer: (state: T) => T) => void;
 ```
 
-#### Arguments
+### Arguments
 - `cell`: A cell whose state needs to be updated.
 
-#### Return value
+### Return value
 A function to update the state (we will refer it as `setState`).  The `setState` function needs to be passed with a `reducer` function. The `reducer` function receives the current state of the `cell` and it needs to return the updated state.
 
 **Type definition**: `type TSetState = <T>(reducer: (state: T) =>  T) => void;`
 
-#### Example
+### Example
 ```
 import { useSetState } from 'recell';
 import dashboardCell from './data/cell';
@@ -107,7 +107,7 @@ const useLoadDashboardData = () => {
 # useGetState
 `useGetState` is a state selector hook to retrieve the required state from a `cell`.
 
-#### Type Definition
+### Type Definition
 ```
 type TAreEqual<T> = (prevState: T | undefined, nextState: T) => boolean;
 
@@ -118,15 +118,15 @@ type TUseGetState = <TState, TSelectedState>(
 ) => TSelectedState
 ```
 
-#### Arguments
+### Arguments
 - `cell`: The cell holding the state.
 -  `selector`: A selector function which receives the complete state of the cell and needs to return the selected state.
 - `areEqual` *(optional)* : An equality comparator function which receives previous and current selected state. It can used to compare these states to decide of the states have changed. It needs to return a boolean value. If not passed then it uses the comparator function configured in the configuration provider. If not configured in the configuration provider then it uses the default equality comparator.
 
-#### Return value
+### Return value
 Selected state.
 
-#### Example
+### Example
 ```
 import { useGetState } from 'recell';
 import dashboardCell from './data/cell';
@@ -187,7 +187,7 @@ The custom equality comparator function checks of the report was updated. So eve
 # Configure
 An optional stateless provider to configure the equality comparator which is used in the hook `useGetState` (explained later), while reading/selecting the state. If not provided the the default equality comparator is used.
 
-#### Type Definition
+### Type Definition
 ```
 type TConfigure = React.FC<{
   areEqual?: <T>(prevState: T | undefined, nextState: T) => boolean;
@@ -195,12 +195,12 @@ type TConfigure = React.FC<{
 }> 
 ```
 
-#### Default equality comparator
+### Default equality comparator
 ```
 const areEqual = (a, b) =>  a === b;
 ```
 
-#### Example
+### Example
 ```
 import { Configure } from 'recell';
 import equal from 'fast-deep-equal';
@@ -216,7 +216,7 @@ const App = () => {
 
 The configuration provider can be screen specific. Meaning, it is not mandatory to have only one configuration provider. For example, a high data intensive screen can have its own provider configured with a deep equality comparator function which checks each an every property value to determine whether any of that value has changed or not.
 
-#### Example
+### Example
 ```
 import { Configure } from 'recell';
 import equal from 'fast-deep-equal';
@@ -236,7 +236,7 @@ The cells are outside of the React component life cycle. Hence, by default, the 
 
 Before the components unmount, this state can be cleared, simply by assigning an empty object or `undefined` to the state.
 
-#### Example
+### Example
 ```
 import { useEffect } from 'react';
 import { useSetState } from 'recell';
@@ -257,7 +257,7 @@ const Screen = () => {
 
 Assign the cached value from storage while initialising the state. To cache, subscribe to the state changes of the cell and cache the state value. 
 
-#### Example
+### Example
 ```
 import storage from 'local-storage';
 import { createCell } from 'recell';
@@ -273,7 +273,7 @@ cell.subscribe((state) => {
 
 Fetch the cached value using the backend APIs and assign the cached value to cell. To cache, subscribe to the state changes of the cell and update it to the database using the backend APIs. 
 
-#### Example
+### Example
 ```
 import axios from 'axios';
 import { createCell } from 'recell';
