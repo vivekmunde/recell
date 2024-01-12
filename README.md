@@ -55,8 +55,10 @@ type TUseSetCell = <T>(cell: TCell<T>) => (reducer: (state: T) => T) => void;
 
 #### Return value
 A function to update the state (we will refer it as `setState`).  The `setState` function needs to be passed with a `reducer` function. The `reducer` function receives the current state of the `cell` and it needs to return the updated state.
-*Type definition*: `type TSetState = <T>(reducer: (state: T) =>  T) => void;`
 
+**Type definition**: `type TSetState = <T>(reducer: (state: T) =>  T) => void;`
+
+#### Example
 ```
 import { useSetState } from 'recell';
 import dashboardCell from './data/cell';
@@ -124,6 +126,7 @@ type TUseGetState = <TState, TSelectedState>(
 #### Return value
 Selected state.
 
+#### Example
 ```
 import { useGetState } from 'recell';
 import dashboardCell from './data/cell';
@@ -198,7 +201,6 @@ const areEqual = (a, b) =>  a === b;
 ```
 
 #### Example
-
 ```
 import { Configure } from 'recell';
 import equal from 'fast-deep-equal';
@@ -214,6 +216,7 @@ const App = () => {
 
 The configuration provider can be screen specific. Meaning, it is not mandatory to have only one configuration provider. For example, a high data intensive screen can have its own provider configured with a deep equality comparator function which checks each an every property value to determine whether any of that value has changed or not.
 
+#### Example
 ```
 import { Configure } from 'recell';
 import equal from 'fast-deep-equal';
@@ -229,12 +232,11 @@ const PerformanceIntensiveScreen = () => {
 
 # Caching
 
-The cells are outside of the React component life cycle. Hence, by default, the cells cache the state in memory.
+The cells are outside of the React component life cycle. Hence, by default, the cells cache their current state in memory.
 
 Before the components unmount, this state can be cleared, simply by assigning an empty object or `undefined` to the state.
 
 #### Example
-
 ```
 import { useEffect } from 'react';
 import { useSetState } from 'recell';
@@ -255,6 +257,7 @@ const Screen = () => {
 
 Assign the cached value from storage while initialising the state. To cache, subscribe to the state changes of the cell and cache the state value. 
 
+#### Example
 ```
 import storage from 'local-storage';
 import { createCell } from 'recell';
@@ -266,27 +269,11 @@ cell.subscribe((state) => {
 });
 ```
 
-If need to unsubscribe then subscribe to the cell state changes inside a hook/component. And unsubscribe for the hook/component unmounts.
-
-```
-import storage from 'local-storage';
-import cell from './cell';
-
-const SomeScreenOrHook = () => {
-	useEffect(() => {
-		const unsubscribe = cell.subscribe((state) => {
-			storage.set('key', JSON.stringify(state));
-		});
-		
-		return () => unsubscribe();
-	}, []):
-};
-```
-
 ## Caching in database storage
 
 Fetch the cached value using the backend APIs and assign the cached value to cell. To cache, subscribe to the state changes of the cell and update it to the database using the backend APIs. 
 
+#### Example
 ```
 import axios from 'axios';
 import { createCell } from 'recell';
@@ -319,6 +306,25 @@ const Screen = () => {
 				}));
 		});
 	}, []);
+};
+```
+
+### Unsubscribe from state changes
+Subscribe to the cell state changes inside a hook/component. Then call the unsubscribe function, returned by the `cell.subscribe` function, before the hook/component unmounts.
+
+#### Example
+```
+import storage from 'local-storage';
+import cell from './cell';
+
+const SomeScreenOrHook = () => {
+	useEffect(() => {
+		const unsubscribe = cell.subscribe((state) => {
+			// set the value in session/local/db storage
+		});
+		
+		return () => unsubscribe();
+	}, []):
 };
 ```
 
