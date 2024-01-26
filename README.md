@@ -85,9 +85,9 @@ const AComponentOrHook = () => {
     useEffect(() => {
 	    const loadUsers = async () => {
 		    try {
-			    // Reducer receives the complete state. So update only the needed state and return the complete state.
+				// Reducer receives the complete state. So update only the needed state and return the complete state.
 
-			    // Before calling the API update only the loading & errors state
+				// Before calling the API update only the loading & errors state
 		        setState(/* reducer */ (currentState) => ({
 		            ...currentState,
 		            loadingUsers: true,
@@ -180,6 +180,7 @@ import { useGetState } from 'recell';
 import usersAndRolesCell from './cells/usersAndRolesCell';
 
 const UsersView = () => {
+	// Retrive the state from cell
 	const loadingUsers = useGetState(usersAndRolesCell, (state) => state.loadingUsers);
 	const users = useGetState(usersAndRolesCell, (state) => state.users);
 	const usersLoadingError = useGetState(usersAndRolesCell, (state) => state.usersLoadingError);
@@ -192,6 +193,7 @@ const UsersView = () => {
 };
 
 const RolesView = () => {
+	// Retrive the state from cell
 	const loadingRoles = useGetState(usersAndRolesCell, (state) => state.loadingRoles);
 	const roles = useGetState(usersAndRolesCell, (state) => state.roles);
 	const rolesLoadingError = useGetState(usersAndRolesCell, (state) => state.rolesLoadingError);
@@ -214,7 +216,7 @@ const useGetReport = () => {
 		(prev, curr) => {
 			// Check if the report has changed
 			// It can be checked by comparing updatedAt time stamp from previous and current state
-			return prev.report.updatedAt !== curr.report.updatedAt;
+			return prev.report.updatedAt === curr.report.updatedAt;
 		},
 	);
 
@@ -223,6 +225,57 @@ const useGetReport = () => {
 ```
 
 The custom equality comparator function checks of the report was updated. So even if user reloads the report and if the report has not changed, so the selector will always return previous report. This way the screen re-renders can be avoided.
+
+### Selecting multiple state values
+
+Multiple values can be retrieved from state in a single selector. But, that will always create a new object, meaning a new state. So the component will always get rendered even if the state has not changed. So its recommended to select the state as is.
+
+Below selector will always create a new object and return. So for any state update the selector will create a new state as a new object.
+
+```
+const {
+	loadingUsers,
+	users,
+	usersLoadingError,
+} = useGetState(
+	usersAndRolesCell,
+	(state) => ({
+		loadingUsers: state.loadingUsers,
+		users: state.users,
+		usersLoadingError: state.usersLoadingError,
+	}),
+);
+```
+
+So always prefer using a separate selector for each state value.
+
+```
+const loadingUsers = useGetState(usersAndRolesCell, (state) => state.loadingUsers);
+const users = useGetState(usersAndRolesCell, (state) => state.users);
+const usersLoadingError = useGetState(usersAndRolesCell, (state) => state.usersLoadingError);
+```
+
+If multiple values are to be selected in a single selector then use a custom equality comparer function to check state changes.
+
+```
+const {
+	loadingUsers,
+	users,
+	usersLoadingError,
+} = useGetState(
+	usersAndRolesCell,
+	(state) => ({
+		loadingUsers: state.loadingUsers,
+		users: state.users,
+		usersLoadingError: state.usersLoadingError,
+	}),
+	(prev, curr) => {
+		return prev.loadingUsers === curr.loadingUsers
+			&& prev.users === curr.users
+			&& prev.usersLoadingError === curr.usersLoadingError;
+	},
+);
+```
 
 # Configure
 
