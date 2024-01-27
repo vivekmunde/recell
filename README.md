@@ -41,12 +41,12 @@ import { createCell } from 'recell';
 import TState from './types';
 
 const usersAndRolesCell = createCell<TState>({
-	loadingUsers: false,
-	users: [],
-	usersLoadingError?: undefined,
-	loadingRoles: false,
-	roles: [],
-	rolesLoadingError?: undefined,
+  loadingUsers: false,
+  users: [],
+  usersLoadingError?: undefined,
+  loadingRoles: false,
+  roles: [],
+  rolesLoadingError?: undefined,
 });
 
 export default usersAndRolesCell;
@@ -75,75 +75,76 @@ A function to update the state (we will refer it as `setState`). The `setState` 
 ### Example
 
 ```
+import { useEffect } from 'react';
 import { useSetState } from 'recell';
 import usersAndRolesCell from '../cells/users-and-roles-cell';
 import axios from 'axios';
 
 const AComponentOrHook = () => {
-    const setState = useSetState(usersAndRolesCell);
+  const setState = useSetState(usersAndRolesCell);
 
-    useEffect(() => {
-	    const loadUsers = async () => {
-		    try {
-				// Reducer receives the complete state. So update only the needed state and return the complete state.
+  useEffect(() => {
+    const loadUsers = async () => {
+      try {
+        // Reducer receives the complete state. So update only the needed state and return the complete state.
 
-				// Before calling the API update only the loading & errors state
-		        setState(/* reducer */ (currentState) => ({
-		            ...currentState,
-		            loadingUsers: true,
-		            usersLoadingError: undefined,
-		        }));
+        // Before calling the API update only the loading & errors state
+        setState(/* reducer */ (currentState) => ({
+          ...currentState,
+          loadingUsers: true,
+          usersLoadingError: undefined,
+        }));
 
-		        const respone = await axios.get(...usersApi);
+        const respone = await axios.get('/users');
 
-			    // Update only the loading & users state
-		        setState(/* reducer */ (currentState) => ({
-			        ...currentState,
-		            loadingUsers: false,
-		            users: response.data,
-		        }));
-	        } catch (error) {
-			    // Update only the loading & error state
-		        setState(/* reducer */ (currentState) => ({
-			        ...currentState,
-		            loadingUsers: false,
-		            usersLoadingError: error.message,
-		        }));
-	        }
-        };
+        // Update only the loading & users state
+        setState(/* reducer */ (currentState) => ({
+          ...currentState,
+          loadingUsers: false,
+          users: response.data,
+        }));
+      } catch (error) {
+        // Update only the loading & error state
+        setState(/* reducer */ (currentState) => ({
+          ...currentState,
+          loadingUsers: false,
+          usersLoadingError: error.message,
+        }));
+      }
+    };
 
-	    const loadRoles = async () => {
-		    try {
-			    // Reducer receives the complete state. So update only the needed state and return the complete state.
+    const loadRoles = async () => {
+      try {
+        // Reducer receives the complete state. So update only the needed state and return the complete state.
 
-			    // Before calling the API update only the loading & errors state
-		        setState(/* reducer */ (currentState) => ({
-		            ...currentState,
-		            loadingRoles: true,
-		            rolesLoadingError: undefined,
-		        }));
+        // Before calling the API update only the loading & errors state
+        setState(/* reducer */ (currentState) => ({
+          ...currentState,
+          loadingRoles: true,
+          rolesLoadingError: undefined,
+        }));
 
-		        const respone = await axios.get(...rolesApi);
+        const respone = await axios.get('/roles');
 
-			    // Update only the loading & roles state
-		        setState(/* reducer */ (currentState) => ({
-			        ...currentState,
-		            loadingRoles: false,
-		            roles: response.data,
-		        }));
-	        } catch (error) {
-			    // Update only the loading & error state
-		        setState(/* reducer */ (currentState) => ({
-			        ...currentState,
-		            loadingRoles: false,
-		            rolesLoadingError: error.message,
-		        }));
-	        }
-        };
+        // Update only the loading & roles state
+        setState(/* reducer */ (currentState) => ({
+          ...currentState,
+          loadingRoles: false,
+          roles: response.data,
+        }));
+      } catch (error) {
+        // Update only the loading & error state
+        setState(/* reducer */ (currentState) => ({
+          ...currentState,
+          loadingRoles: false,
+          rolesLoadingError: error.message,
+        }));
+      }
+    };
 
-		loadUsers();
-		loadRoles();
-    }, []);
+    loadUsers();
+    loadRoles();
+  }, []);
 };
 ```
 
@@ -180,29 +181,29 @@ import { useGetState } from 'recell';
 import usersAndRolesCell from './cells/usersAndRolesCell';
 
 const UsersView = () => {
-	// Retrive the state from cell
-	const loadingUsers = useGetState(usersAndRolesCell, (state) => state.loadingUsers);
-	const users = useGetState(usersAndRolesCell, (state) => state.users);
-	const usersLoadingError = useGetState(usersAndRolesCell, (state) => state.usersLoadingError);
+  // Retrive the state from cell
+  const loadingUsers = useGetState(usersAndRolesCell, (state) => state.loadingUsers);
+  const users = useGetState(usersAndRolesCell, (state) => state.users);
+  const usersLoadingError = useGetState(usersAndRolesCell, (state) => state.usersLoadingError);
 
-	return loadingUsers
-		? <Loader />
-		: usersLoadingError
-			? <Error message={usersLoadingError} />
-			: <Users data={users} />;
+  return loadingUsers
+    ? <Loader />
+    : usersLoadingError
+      ? <Error message={usersLoadingError} />
+      : <Users data={users} />;
 };
 
 const RolesView = () => {
-	// Retrive the state from cell
-	const loadingRoles = useGetState(usersAndRolesCell, (state) => state.loadingRoles);
-	const roles = useGetState(usersAndRolesCell, (state) => state.roles);
-	const rolesLoadingError = useGetState(usersAndRolesCell, (state) => state.rolesLoadingError);
+  // Retrive the state from cell
+  const loadingRoles = useGetState(usersAndRolesCell, (state) => state.loadingRoles);
+  const roles = useGetState(usersAndRolesCell, (state) => state.roles);
+  const rolesLoadingError = useGetState(usersAndRolesCell, (state) => state.rolesLoadingError);
 
-	return loadingRoles
-		? <Loader />
-		: rolesLoadingError
-			? <Error message={usersLoadingError} />
-			: <Roles data={roles} />;
+  return loadingRoles
+    ? <Loader />
+    : rolesLoadingError
+      ? <Error message={usersLoadingError} />
+      : <Roles data={roles} />;
 };
 ```
 
@@ -210,17 +211,17 @@ const RolesView = () => {
 
 ```
 const useGetReport = () => {
-	const report = useGetState(
-		cell,
-		(state) => state.report),
-		(prev, curr) => {
-			// Check if the report has changed
-			// It can be checked by comparing updatedAt time stamp from previous and current state
-			return prev.report.updatedAt === curr.report.updatedAt;
-		},
-	);
+  const report = useGetState(
+    cell,
+    (state) => state.report),
+    (prev, curr) => {
+      // Check if the report has changed
+      // It can be checked by comparing updatedAt time stamp from previous and current state
+      return prev.report.updatedAt === curr.report.updatedAt;
+    },
+  );
 
-	return report;
+  return report;
 };
 ```
 
@@ -234,16 +235,16 @@ Below selector will always create a new object and return. So for any state upda
 
 ```
 const {
-	loadingUsers,
-	users,
-	usersLoadingError,
+  loadingUsers,
+  users,
+  usersLoadingError,
 } = useGetState(
-	usersAndRolesCell,
-	(state) => ({
-		loadingUsers: state.loadingUsers,
-		users: state.users,
-		usersLoadingError: state.usersLoadingError,
-	}),
+  usersAndRolesCell,
+  (state) => ({
+    loadingUsers: state.loadingUsers,
+    users: state.users,
+    usersLoadingError: state.usersLoadingError,
+  }),
 );
 ```
 
@@ -259,21 +260,21 @@ If multiple values are to be selected in a single selector then use a custom equ
 
 ```
 const {
-	loadingUsers,
-	users,
-	usersLoadingError,
+  loadingUsers,
+  users,
+  usersLoadingError,
 } = useGetState(
-	usersAndRolesCell,
-	(state) => ({
-		loadingUsers: state.loadingUsers,
-		users: state.users,
-		usersLoadingError: state.usersLoadingError,
-	}),
-	(prev, curr) => {
-		return prev.loadingUsers === curr.loadingUsers
-			&& prev.users === curr.users
-			&& prev.usersLoadingError === curr.usersLoadingError;
-	},
+  usersAndRolesCell,
+  (state) => ({
+    loadingUsers: state.loadingUsers,
+    users: state.users,
+    usersLoadingError: state.usersLoadingError,
+  }),
+  (prev, curr) => {
+    return prev.loadingUsers === curr.loadingUsers
+      && prev.users === curr.users
+      && prev.usersLoadingError === curr.usersLoadingError;
+  },
 );
 ```
 
@@ -303,11 +304,11 @@ import { Configure } from 'recell';
 import equal from 'fast-deep-equal';
 
 const App = () => {
-	return (
-		<Configure areEqual={(prev, curr) => equal(a, b)}>
-			// children ...
-		</Configure>
-	);
+  return (
+    <Configure areEqual={(prev, curr) => equal(a, b)}>
+      // children ...
+    </Configure>
+  );
 };
 ```
 
@@ -320,11 +321,11 @@ import { Configure } from 'recell';
 import equal from 'fast-deep-equal';
 
 const PerformanceIntensiveScreen = () => {
-	return (
-		<Configure areEqual={(prev, curr) => equal(a, b)}>
-			// Filters and Table
-		</Configure>
-	);
+  return (
+    <Configure areEqual={(prev, curr) => equal(a, b)}>
+      // Filters and Table
+    </Configure>
+  );
 };
 ```
 
@@ -342,19 +343,19 @@ import { useSetState } from 'recell';
 import cell from './cell';
 
 const Screen = () => {
-	const setState = useSetState(cell);
+  const setState = useSetState(cell);
 
-	useEffect(() => {
-		return () => {
-			setState(() => undefined);
-		};
-	}, []);
+  useEffect(() => {
+    return () => {
+      setState(() => undefined);
+    };
+  }, []);
 };
 ```
 
 ## Caching in session/local storage
 
-Assign the cached value from storage while initialising the state. To cache, subscribe to the state changes of the cell and cache the state value.
+To cache, subscribe to the state changes of the cell and cache the state value. Assign the cached value from storage while initializing the state.
 
 ### Example
 
@@ -368,13 +369,13 @@ const cell = createCell(JSON.parse(storage.get('key') ?? {}));
 // Subscribe to the changes in the state of the cell
 // Store the state in storage
 cell.subscribe((state) => {
-	storage.set('key', JSON.stringify(state));
+  storage.set('key', JSON.stringify(state));
 });
 ```
 
 ## Caching in database storage
 
-Fetch the cached value using the backend APIs and assign the cached value to cell. To cache, subscribe to the state changes of the cell and update it to the database using the backend APIs.
+To cache, subscribe to the state changes of the cell and update it to the database using the backend APIs. Fetch the cached value using the backend APIs and assign the cached value to cell.
 
 ### Example
 
@@ -385,7 +386,7 @@ import { createCell } from 'recell';
 const cell = createCell({ loadingCache: true });
 
 cell.subscribe((state) => {
-	axios.post('/url', state);
+  axios.post('/url', state);
 });
 ```
 
@@ -394,23 +395,23 @@ import { useSetState } from 'recell';
 import cell from './cell';
 
 const Screen = () => {
-	const setState = useSetState(cell);
+  const setState = useSetState(cell);
 
-	useEffect(() => {
-		axios.get('/url')
-			.then((response) => {
-				setState((currentState) => ({
-					...currentState,
-					loadingCache: false,
-					...response.data,
-				}))
-			.catch((error) => {
-				setState((currentState) => ({
-					...currentState,
-					loadingCache: false,
-				}));
-		});
-	}, []);
+  useEffect(() => {
+    axios.get('/url')
+      .then((response) => {
+        setState((currentState) => ({
+          ...currentState,
+          loadingCache: false,
+          ...response.data,
+        }))
+      .catch((error) => {
+        setState((currentState) => ({
+          ...currentState,
+          loadingCache: false,
+        }));
+    });
+  }, []);
 };
 ```
 
@@ -425,13 +426,13 @@ import storage from 'local-storage';
 import cell from './cell';
 
 const SomeScreenOrHook = () => {
-	useEffect(() => {
-		const unsubscribe = cell.subscribe((state) => {
-			// set the value in session/local/db storage
-		});
+  useEffect(() => {
+    const unsubscribe = cell.subscribe((state) => {
+      // set the value in session/local/db storage
+    });
 
-		return () => unsubscribe();
-	}, []):
+    return () => unsubscribe();
+  }, []):
 };
 ```
 
