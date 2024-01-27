@@ -1,13 +1,13 @@
 import { mount } from "enzyme";
 import areEqual from "fast-deep-equal";
 import React, { useEffect } from "react";
-import { Configure, createCell, useGetState, useSetState } from "../lib/es";
+import { Configure, create, useGetState, useSetState } from "../lib/es";
 
 describe("recell", () => {
   test("Should check subscriber type to be a function", () => {
     expect.hasAssertions();
 
-    const cell = createCell({});
+    const cell = create({});
 
     const subscriberTypes = [true, 123, "string", Symbol("S"), [1, 2, 3]];
 
@@ -21,7 +21,7 @@ describe("recell", () => {
   test("Should check selector type to be a function", () => {
     expect.hasAssertions();
 
-    const cell = createCell({});
+    const cell = create({});
 
     const selectorTypes = [true, 123, "string", Symbol("S"), [1, 2, 3]];
 
@@ -39,7 +39,7 @@ describe("recell", () => {
   test("Should check equality comparer type to be a function", () => {
     expect.hasAssertions();
 
-    const cell = createCell({});
+    const cell = create({});
 
     const comparerTypes = [true, 123, "string", Symbol("S"), [1, 2, 3]];
 
@@ -57,7 +57,7 @@ describe("recell", () => {
   test("Should initialize default state", () => {
     expect.hasAssertions();
 
-    const userDetailsCell = createCell({ name: "Default" });
+    const userDetailsCell = create({ name: "Default" });
 
     const View1 = () => {
       const userDetails = useGetState(userDetailsCell, (state) => state);
@@ -76,7 +76,7 @@ describe("recell", () => {
   test("Should check if the state being set is not undefined", () => {
     expect.hasAssertions();
 
-    const userDetailsCell = createCell({ name: "Default" });
+    const userDetailsCell = create({ name: "Default" });
 
     const View1 = () => {
       const setState = useSetState(userDetailsCell);
@@ -100,7 +100,7 @@ describe("recell", () => {
   test("Should update store state and assign the updated state to subscriber components", () => {
     expect.hasAssertions();
 
-    const userDetailsCell = createCell({ name: "One" });
+    const userDetailsCell = create({ name: "One" });
 
     const View1 = () => {
       const name = useGetState(userDetailsCell, (state) => state.name);
@@ -162,7 +162,7 @@ describe("recell", () => {
   test("Should use the default configuration", () => {
     expect.hasAssertions();
 
-    const userDetailsCell = createCell({ name: "One" });
+    const userDetailsCell = create({ name: "One" });
 
     const View1 = () => {
       const name = useGetState(userDetailsCell, (state) => state.name);
@@ -224,7 +224,7 @@ describe("recell", () => {
   test("Should return only the selected state", () => {
     expect.hasAssertions();
 
-    const userDetailsCell = createCell({
+    const userDetailsCell = create({
       name: "One",
       address: "ABC Road, PQR Apartment, XYZ, 123",
       profession: "Engineer",
@@ -266,7 +266,7 @@ describe("recell", () => {
   test("Should re-render only if the selected state has changed", () => {
     expect.hasAssertions();
 
-    const userDetailsCell = createCell({
+    const userDetailsCell = create({
       name: "One",
       address: "ABC Road, PQR Apartment, XYZ, 123",
       profession: "Engineer",
@@ -391,7 +391,7 @@ describe("recell", () => {
   test("Should call the custom equality comparison function", () => {
     expect.hasAssertions();
 
-    const userDetailsCell = createCell({
+    const userDetailsCell = create({
       name: "One",
       address: "ABC Road, PQR Apartment, XYZ, 123",
       profession: "Engineer",

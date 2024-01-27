@@ -1,7 +1,7 @@
 import * as pusu from "pusu";
 import { TCell, TOnGetState, TOnSetState, TOnSubscribe } from "./types";
 
-const createCell = <T>(initialState: T): TCell<T> => {
+const create = <T>(initialState: T): TCell<T> => {
   const publication = pusu.createPublication<T>("cell");
   let currentState = initialState;
 
@@ -23,11 +23,7 @@ const createCell = <T>(initialState: T): TCell<T> => {
     }
 
     return pusu.subscribe(publication, (state) => {
-      if (state === undefined || state === null) {
-        throw new Error("State cannot be undefined or null.");
-      }
-
-      subscriber(state ?? {});
+      subscriber(state as T);
     });
   };
 
@@ -38,4 +34,4 @@ const createCell = <T>(initialState: T): TCell<T> => {
   };
 };
 
-export default createCell;
+export default create;
