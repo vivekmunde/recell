@@ -12,17 +12,17 @@ For example, a `cell` can hold the logged in user details which can be accessed 
 
 # createCell
 
-Creates a `cell` with the default state and state accessing & updating methods.
+Creates a `cell` with the default state and returns an object having the state accessing & updating methods.
 
-### Type Definition
+### Type definition
 
 ```
-type TCreateCell = <T>(initialState: T) => TCell<T>;
+declare const create: <T>(initialState: T) => TCell<T>;
 ```
 
 ### Arguments
 
-- `state`: A default value of the state. The default value can be `undefined`.
+- `state`: A default value of the state.
 
 ### Return value
 
@@ -31,8 +31,6 @@ A cell object having the state accessing & updating methods.
 - `getState`: Function to get the current state.
 - `setState`: Function to set the state.
 - `subscribe`: A subscriber function to subscribe to the state changes. It returns a function, which unsubscribes when called.
-
-**Note**: `getState`, `setState` and `subscribe` are core APIs. To get and set state, please use hooks `useGetState` and `useSetState`. `subscribe` can be used for caching, is explained under the caching section.
 
 ### Example
 
@@ -56,10 +54,12 @@ export default usersAndRolesCell;
 
 `useSetState` is a hook to update the state of the `cell`.
 
-### Type Definition
+### Type definition
 
 ```
-type TUseSetCell = <T>(cell: TCell<T>) => (reducer: (state: T) => T) => void;
+type TOnSetState<T> = (reducer: (state: T) => T) => void;
+
+declare const useSetState: <T>(cell: TCell<T>) => TOnSetState<T>;
 ```
 
 ### Arguments
@@ -68,9 +68,17 @@ type TUseSetCell = <T>(cell: TCell<T>) => (reducer: (state: T) => T) => void;
 
 ### Return value
 
-A function to update the state (we will refer it as `setState`). The `setState` function needs to be passed with a `reducer` function. The `reducer` function receives the current state of the `cell` and it needs to return the updated state.
+A function to update the state (we will refer it as `setState`). The `setState` function needs to be passed a `reducer` function as a parameter. The `reducer` function receives the current state of the `cell` and it needs to return the updated state.
 
-**Type definition**: `type TSetState = <T>(reducer: (state: T) =>  T) => void;`
+## Reducer
+
+The `reducer` function is a function responsible for updating the state. It receives the current state of the `cell` and it needs to return the updated state.
+
+### Type definition
+
+```
+type TReducer = (reducer: (state: T) => T) => void;
+```
 
 ### Example
 
@@ -150,9 +158,9 @@ const AComponentOrHook = () => {
 
 # useGetState
 
-`useGetState` is a state selector hook to retrieve the required state from a `cell`.
+`useGetState` is a state selector hook to retrieve the state from a `cell`.
 
-### Type Definition
+### Type definition
 
 ```
 type TAreEqual<T> = (prevState: T | undefined, nextState: T) => boolean;
@@ -168,7 +176,7 @@ type TUseGetState = <TState, TSelectedState>(
 
 - `cell`: The cell holding the state.
 - `selector`: A selector function which receives the complete state of the cell and needs to return the selected state.
-- `areEqual` _(optional)_ : An equality comparator function which receives previous and current selected state. It can used to compare these states to decide of the states have changed. It needs to return a boolean value. If not passed then it uses the comparator function configured in the configuration provider. If not configured in the configuration provider then it uses the default equality comparator.
+- `areEqual`: An equality comparator function which receives previous and next selected state. It can used to compare these states to decide if the state has changed. It needs to return a boolean value. True: Meaning the selected state has not changed. False: Meaning selected value has changed. If the equality comparator function not passed then it uses the comparator function configured in the configuration provider. If not configured in the configuration provider then it uses the default equality comparator.
 
 ### Return value
 
@@ -207,7 +215,7 @@ const RolesView = () => {
 };
 ```
 
-### Using custom equality comparator function
+## Using custom equality comparator function
 
 ```
 const useGetReport = () => {
@@ -225,9 +233,9 @@ const useGetReport = () => {
 };
 ```
 
-The custom equality comparator function checks of the report was updated. So even if user reloads the report and if the report has not changed, so the selector will always return previous report. This way the screen re-renders can be avoided.
+The custom equality comparator function checks if the report was changed by checking the `updatedAt` timestamp. So even if user reloads the report (click of refresh button) and if the report has not changed, the subscriber will not be called and hence the `useGetState` will not get triggered and the state will not be changed. This way the screen re-renders can be avoided.
 
-### Selecting multiple state values
+## Selecting multiple state values
 
 Multiple values can be retrieved from state in a single selector. But, that will always create a new object, meaning a new state. So the component will always get rendered even if the state has not changed. So its recommended to select the state as is.
 
@@ -282,7 +290,7 @@ const {
 
 An optional stateless provider to configure the equality comparator which is used in the hook `useGetState` (explained later), while reading/selecting the state. If not provided the the default equality comparator is used.
 
-### Type Definition
+### Type definition
 
 ```
 type TConfigure = React.FC<{
