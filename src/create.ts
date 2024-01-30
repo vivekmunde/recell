@@ -1,6 +1,12 @@
 import * as pusu from "pusu";
 import { TCell, TOnGetState, TOnSetState, TOnSubscribe } from "./types";
 
+/**
+ * Creates a new cell object.
+ *
+ * @param {T} initialState - Initial state.
+ * @returns An instance of the cell having the state accessing & updating methods.
+ */
 const create = <T>(initialState: T): TCell<T> => {
   const publication = pusu.createPublication<T>("cell");
   let currentState = initialState;
