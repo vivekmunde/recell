@@ -30,7 +30,7 @@
   ],
   "homepage": "https://github.com/vivekmunde/recell",
   "peerDependencies": {
-    "pusu": "^1.2.0",
+    "pusu": "^1.2.2",
     "react": ">= 16.8.0",
     "react-dom": ">= 16.8.0"
   },
