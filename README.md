@@ -197,7 +197,7 @@ A state selector hook to retrieve the state from a cell. `useGetState` returns t
 ### Type definition
 
 ```
-type TAreEqual<T> = (prevState: T | undefined, nextState: T) => boolean;
+type TAreEqual<T> = (currState: T | undefined, prevState: T) => boolean;
 
 type TUseGetState = <TState, TSelectedState>(
   cell: TCell<TState>,
@@ -210,7 +210,7 @@ type TUseGetState = <TState, TSelectedState>(
 
 - `cell`: The cell holding the state.
 - `selector`: A selector function which receives the complete state of the cell and needs to return the selected state.
-- `areEqual`: An equality comparator function which receives previous and next selected state. It can used to compare these states to decide if the state has changed. It needs to return a boolean value. True: Meaning the selected state has not changed. False: Meaning selected value has changed. If the equality comparator function not passed then it uses the comparator function configured in the configuration provider. If not configured in the configuration provider then it uses the default equality comparator.
+- `areEqual`: An equality comparator function which receives current and previous selected state. It can used to compare these states to decide if the state has changed. It needs to return a boolean value. True: Meaning the selected state has not changed. False: Meaning selected value has changed. If the equality comparator function not passed then it uses the comparator function configured in the configuration provider. If it's not configured in the configuration provider then it uses the default equality comparator i.e. (current, previous) => (current === previous).
 
 ### Return value
 
@@ -478,7 +478,7 @@ It's a function to revieve the state and the updates in state. Each time the sta
 ### Type definition
 
 ```
-type TAreEqual<T> = (prevState: T | undefined, nextState: T) => boolean;
+type TAreEqual<T> = (currState: T | undefined, prevState: T) => boolean;
 
 type TUnsubscribe = () => void;
 
@@ -490,7 +490,7 @@ type TSubscribe = <TSelectedState>(subscriber: TSubscriber<TSelectedState>, sele
 
 - `subscriber`: A subscriber function to be called each time the state change is changed and published. The subscriber function will recieve the data selected and returned by the `selector` function. If `selector` is not supplied then the subscruber function will receive the complete state.
 - `selector`: A selector function to select the required state value(s) from the state and return the selected state.
-- `areEqual`: An equality comparator function which receives previous and current selected state. This equality comparater function can be used to determine if the current selected state has changed from the previous selected state. If there is no change in the selected state then the subscribers will not be called. True: Meaning the selected state has not changed. False: Meaning the selected state has changed. If not passed then it uses the default comparator function (current, previous) => (current === previous).
+- `areEqual`: An equality comparator function which receives current and previous selected state. It can used to compare these states to decide if the state has changed. It needs to return a boolean value. True: Meaning the selected state has not changed. False: Meaning selected value has changed. If the equality comparator function not passed then it uses the comparator function configured in the configuration provider. If it's not configured in the configuration provider then it uses the default equality comparator i.e. (current, previous) => (current === previous).
 
 ### Return value
 

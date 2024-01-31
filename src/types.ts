@@ -1,10 +1,11 @@
 /**
- * An equality comparator function which receives previous and current selected state.
- * This equality comparater function can be used to determine if the current selected state has changed from the previous selected state.
- * If there is no change in the selected state then the subscribers will not be called.
+ * An equality comparator function which receives current and previous selected state.
+ * It can used to compare these states to decide if the state has changed.
+ * It needs to return a boolean value.
  * True: Meaning the selected state has not changed.
- * False: Meaning the selected state has changed.
- * If not passed then it uses the default comparator function (current, previous) => (current === previous).
+ * False: Meaning selected value has changed.
+ * If the equality comparator function not passed then it uses the comparator function configured in the configuration provider.
+ * If it's not configured in the configuration provider then it uses the default equality comparator i.e. (current, previous) => (current === previous).
  *
  * @param {T} currentState - Current selected state of the cell.
  * @param {T} previousState - Previous selected state of the cell.
@@ -17,8 +18,8 @@ export type TAreEqual<T> = (currentState: T, previousState: T) => boolean;
  *
  */
 export type TContext = {
-  /** An equality comparator function which receives previous and next selected state. It can used to compare these states to decide if the state has changed. It needs to return a boolean value. True: Meaning the selected state has not changed. False: Meaning selected value has changed.  */
-  areEqual: <T>(prevState: T | undefined, nextState: T) => boolean;
+  /** An equality comparator function which receives current and previous selected state. It can used to compare these states to decide if the state has changed. It needs to return a boolean value. True: Meaning the selected state has not changed. False: Meaning selected value has changed. If the equality comparator function not passed then it uses the comparator function configured in the configuration provider. If it's not configured in the configuration provider then it uses the default equality comparator i.e. (current, previous) => (current === previous). */
+  areEqual: <T>(currState: T | undefined, prevState: T) => boolean;
 };
 
 /**
@@ -128,7 +129,7 @@ export type TCell<TState> = {
    *
    * @param {TSubscriber} subscriber - A subscriber function to be called each time the state change is published. The subscriber function will recieve the data selected and returned by the selector function. If selector is not supplied then the subscruber function will receive the complete state.
    * @param {TSelector} selector - A selector function to select the required state value(s) from the state and return the selected state.
-   * @param {TAreEqual} areEqual - An equality comparator function which receives previous and current selected state. This equality comparater function can be used to determine if the current selected state has changed from the previous selected state. If there is no change in the selected state then the subscribers will not be called. True: Meaning the selected state has not changed. False: Meaning the selected state has changed. If not passed then it uses the default comparator function (current, previous) => (current === previous).
+   * @param {TAreEqual} areEqual - An equality comparator function which receives current and previous selected state. It can used to compare these states to decide if the state has changed. It needs to return a boolean value. True: Meaning the selected state has not changed. False: Meaning selected value has changed. If the equality comparator function not passed then it uses the comparator function configured in the configuration provider. If it's not configured in the configuration provider then it uses the default equality comparator i.e. (current, previous) => (current === previous).
    * @returns {TUnsubscribe} An unsubscriber function, which when called unsubscribes the subscriber function from from the state updates.
    */
   subscribe: <TSelectedState>(
