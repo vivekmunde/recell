@@ -748,7 +748,3 @@ const dashboardCell = createCell(
 # License
 
 MIT
-
-# License
-
-MIT
