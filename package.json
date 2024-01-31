@@ -47,7 +47,7 @@
     "enzyme-adapter-react-16": "^1.14.0",
     "fast-deep-equal": "^3.1.3",
     "jest": "^24.8.0",
-    "pusu": "^1.2.1",
+    "pusu": "^1.2.2",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "typescript": "^5.2.2"
