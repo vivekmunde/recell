@@ -1,7 +1,13 @@
 import ConfigurationContext from "./configuration-context";
 import Configure from "./configure";
-import create from "./create";
+import createCell from "./create-cell";
 import useGetState from "./use-get-state";
 import useSetState from "./use-set-state";
 
-export { ConfigurationContext, Configure, create, useGetState, useSetState };
+export {
+  ConfigurationContext,
+  Configure,
+  createCell,
+  useGetState,
+  useSetState,
+};

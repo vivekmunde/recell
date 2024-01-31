@@ -1,6 +1,6 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ConfigurationContext from "./configuration-context";
-import { TAreEqual, TCell, TSelector, TSubscriber } from "./types";
+import { TAreEqual, TCell, TSelector } from "./types";
 
 /**
  * A state selector hook to retrieve the state from a cell.
@@ -17,37 +17,22 @@ const useGetState = <TState, TSelectedState>(
 ): TSelectedState => {
   const configuration = useContext(ConfigurationContext);
 
-  const fnSelector = selector ?? ((state) => state);
-  const fnAreEqual: TAreEqual<TSelectedState> =
-    areEqual ?? configuration.areEqual;
+  const [state, setState] = useState<TSelectedState>(() => {
+    if (typeof selector !== "function") {
+      throw new Error("Selector must be a function.");
+    }
 
-  if (typeof fnSelector !== "function") {
-    throw new Error("Selector must be a function.");
-  }
-  if (typeof fnAreEqual !== "function") {
-    throw new Error("Equality comparer must be a function.");
-  }
-
-  const ref = useRef<{ state: TSelectedState }>({
-    state: fnSelector(cell.getState()),
+    return selector(cell.state());
   });
-  const [state, setState] = useState<TSelectedState>(
-    fnSelector(cell.getState())
-  );
 
   useEffect(() => {
-    ref.current.state = state;
-
-    const subscriber: TSubscriber<TState> = (newState) => {
-      const newSelectedState = fnSelector(newState);
-
-      if (!fnAreEqual(ref.current.state, newSelectedState)) {
-        ref.current.state = newSelectedState;
-        setState(newSelectedState);
-      }
-    };
-
-    return cell.subscribe(subscriber);
+    return cell.subscribe<TSelectedState>(
+      (selectedState) => {
+        setState(selectedState);
+      },
+      selector,
+      areEqual ?? configuration.areEqual
+    );
   }, []);
 
   return state;

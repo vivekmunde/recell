@@ -1,34 +1,27 @@
 import { mount } from "enzyme";
 import areEqual from "fast-deep-equal";
-import React, { useEffect } from "react";
-import { Configure, create, useGetState, useSetState } from "../lib/es";
+import React from "react";
+import { Configure, createCell, useGetState, useSetState } from "../lib/es";
 
-describe("recell", () => {
-  test("Should check subscriber type to be a function", () => {
-    expect.hasAssertions();
-
-    const cell = create({});
-
-    const subscriberTypes = [true, 123, "string", Symbol("S"), [1, 2, 3]];
-
-    subscriberTypes.forEach((subscriber) => {
-      expect(() => {
-        cell.subscribe(subscriber);
-      }).toThrow(new Error("Subscriber must be a function."));
-    });
-  });
-
+describe("recell: hooks", () => {
   test("Should check selector type to be a function", () => {
     expect.hasAssertions();
 
-    const cell = create({});
+    const cellInstance = createCell({});
 
-    const selectorTypes = [true, 123, "string", Symbol("S"), [1, 2, 3]];
+    const selectorTypes = [
+      true,
+      123,
+      "string",
+      Symbol("S"),
+      [1, 2, 3],
+      undefined,
+    ];
 
     const View = (selector) => {
       let state = {};
       expect(() => {
-        state = useGetState(cell, selector);
+        state = useGetState(cellInstance, selector);
       }).toThrow(new Error("Selector must be a function."));
       return <div>{JSON.stringify(state)}</div>;
     };
@@ -36,28 +29,10 @@ describe("recell", () => {
     selectorTypes.forEach((selector) => mount(<View selector={selector} />));
   });
 
-  test("Should check equality comparer type to be a function", () => {
-    expect.hasAssertions();
-
-    const cell = create({});
-
-    const comparerTypes = [true, 123, "string", Symbol("S"), [1, 2, 3]];
-
-    const View = (comparer) => {
-      let state = {};
-      expect(() => {
-        state = useGetState(cell, undefined, comparer);
-      }).toThrow(new Error("Equality comparer must be a function."));
-      return <div>{JSON.stringify(state)}</div>;
-    };
-
-    comparerTypes.forEach((comparer) => mount(<View comparer={comparer} />));
-  });
-
   test("Should initialize default state", () => {
     expect.hasAssertions();
 
-    const userDetailsCell = create({ name: "Default" });
+    const userDetailsCell = createCell({ name: "Default" });
 
     const View1 = () => {
       const userDetails = useGetState(userDetailsCell, (state) => state);
@@ -73,34 +48,10 @@ describe("recell", () => {
     expect(wrapper.find("#name1").text()).toEqual("Default");
   });
 
-  test("Should check if the state being set is not undefined", () => {
-    expect.hasAssertions();
-
-    const userDetailsCell = create({ name: "Default" });
-
-    const View1 = () => {
-      const setState = useSetState(userDetailsCell);
-
-      useEffect(() => {
-        expect(() => {
-          setState(() => undefined);
-        }).toThrow(new Error("State cannot be undefined or null."));
-      }, []);
-
-      return <div />;
-    };
-
-    mount(
-      <div>
-        <View1 />
-      </div>
-    );
-  });
-
   test("Should update store state and assign the updated state to subscriber components", () => {
     expect.hasAssertions();
 
-    const userDetailsCell = create({ name: "One" });
+    const userDetailsCell = createCell({ name: "One" });
 
     const View1 = () => {
       const name = useGetState(userDetailsCell, (state) => state.name);
@@ -162,7 +113,7 @@ describe("recell", () => {
   test("Should use the default configuration", () => {
     expect.hasAssertions();
 
-    const userDetailsCell = create({ name: "One" });
+    const userDetailsCell = createCell({ name: "One" });
 
     const View1 = () => {
       const name = useGetState(userDetailsCell, (state) => state.name);
@@ -224,7 +175,7 @@ describe("recell", () => {
   test("Should return only the selected state", () => {
     expect.hasAssertions();
 
-    const userDetailsCell = create({
+    const userDetailsCell = createCell({
       name: "One",
       address: "ABC Road, PQR Apartment, XYZ, 123",
       profession: "Engineer",
@@ -266,7 +217,7 @@ describe("recell", () => {
   test("Should re-render only if the selected state has changed", () => {
     expect.hasAssertions();
 
-    const userDetailsCell = create({
+    const userDetailsCell = createCell({
       name: "One",
       address: "ABC Road, PQR Apartment, XYZ, 123",
       profession: "Engineer",
@@ -288,9 +239,10 @@ describe("recell", () => {
 
     const fnProfessionSubscriber = jest.fn();
     const Profession = () => {
-      const { profession } = useGetState(userDetailsCell, ({ profession }) => ({
-        profession,
-      }));
+      const profession = useGetState(
+        userDetailsCell,
+        ({ profession }) => profession
+      );
       fnProfessionSubscriber();
       return <span id="profession">{profession}</span>;
     };
@@ -391,7 +343,7 @@ describe("recell", () => {
   test("Should call the custom equality comparison function", () => {
     expect.hasAssertions();
 
-    const userDetailsCell = create({
+    const userDetailsCell = createCell({
       name: "One",
       address: "ABC Road, PQR Apartment, XYZ, 123",
       profession: "Engineer",
