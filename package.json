@@ -1,7 +1,7 @@
 {
   "name": "recell",
   "version": "1.0.0",
-  "description": "Application state management for React",
+  "description": "Distributed state management for React applications",
   "main": "./lib/cjs/index.js",
   "module": "./lib/es/index.js",
   "types": "./lib/es/index.d.ts",
