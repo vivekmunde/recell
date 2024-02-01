@@ -1,7 +1,7 @@
 {
   "name": "recell",
   "version": "0.1.0",
-  "description": "Application state management for React",
+  "description": "Distributed state management for React applications",
   "main": "./lib/cjs/index.js",
   "module": "./lib/es/index.js",
   "types": "./lib/es/index.d.ts",
@@ -31,8 +31,8 @@
   "homepage": "https://github.com/vivekmunde/recell",
   "peerDependencies": {
     "pusu": "^1.2.2",
-    "react": ">= 16.8.0",
-    "react-dom": ">= 16.8.0"
+    "react": ">= 17.0.0",
+    "react-dom": ">= 17.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.8",
@@ -41,15 +41,15 @@
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-react": "^7.0.0",
     "@types/react": "^18.2.33",
+    "@wojtekmaj/enzyme-adapter-react-17": "^0.8.0",
     "babel-jest": "^24.8.0",
     "babel-loader": "^8.0.6",
     "enzyme": "^3.10.0",
-    "enzyme-adapter-react-16": "^1.14.0",
     "fast-deep-equal": "^3.1.3",
     "jest": "^24.8.0",
     "pusu": "^1.2.2",
-    "react": "^16.14.0",
-    "react-dom": "^16.14.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "rimraf": "^5.0.5",
     "typescript": "^5.2.2"
   }
