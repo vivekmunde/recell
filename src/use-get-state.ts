@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import ConfigurationContext from "./configuration-context";
-import { TAreEqual, TCell, TSelector } from "./types";
+import { TAreEqual, TCell, TSelector, TUseGetState } from "./types";
 
 /**
  * A state selector hook to retrieve the state from a cell.
@@ -10,7 +10,7 @@ import { TAreEqual, TCell, TSelector } from "./types";
  * @param {TAreEqual} areEqual - An equality comparator function which will receive previous and next selected state. It can used to compare these states to decide if the state has changed. It needs to return a boolean value. True: Meaning the selected state has not changed. False: Meaning selected value has changed. If the equality comparator function not passed then it uses the comparator function configured in the configuration provider. If not configured in the configuration provider then it uses the default equality comparator.
  * @returns {TSelectedState} Selected state.
  */
-const useGetState = <TState, TSelectedState>(
+const useGetState: TUseGetState = <TState, TSelectedState>(
   cell: TCell<TState>,
   selector: TSelector<TState, TSelectedState>,
   areEqual?: TAreEqual<TSelectedState>

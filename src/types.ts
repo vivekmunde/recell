@@ -23,6 +23,16 @@ export type TContext = {
 };
 
 /**
+ * An stateless provider to configure the equality comparator which is used in the hook `useGetState`, while reading/selecting the state.
+ * If not provided the the default equality comparator is used.
+ */
+export type TConfigure = React.FC<{
+  /** An equality comparator function which receives previous and next selected state. It can used to compare these states to decide if the state has changed. It needs to return a boolean value. True: Meaning the selected state has not changed. False: Meaning selected value has changed. */
+  areEqual?: <T>(prevState: T | undefined, nextState: T) => boolean;
+  children: React.ReactNode;
+}>;
+
+/**
  * A subscriber function to be called each time the state change is published.
  *
  * @param {TSelectedState} state - The selected state. If selector is not provided then the entire state is returned.
@@ -84,7 +94,7 @@ export type TLogAction =
  * @property {TState} current - Current selected state of the cell.
  * @property {TState} previous - Previous selected state of the cell.
  */
-export type TSelectedStateLog<TSelectedState> = {
+export type TSelectedStateLogInfo<TSelectedState> = {
   previous: TSelectedState;
   current: TSelectedState;
 };
@@ -96,10 +106,10 @@ export type TSelectedStateLog<TSelectedState> = {
  * @property {TState} previous - Previous state of the cell.
  * @property {TState} selected - Selected state selected by the selector and then published and sent to the subscribers.
  */
-export type TStateLog<TState, TSelectedState> = {
+export type TStateLogInfo<TState, TSelectedState> = {
   current: TState;
   previous: TState;
-  selected?: TSelectedStateLog<TSelectedState>;
+  selected?: TSelectedStateLogInfo<TSelectedState>;
 };
 
 /**
@@ -107,15 +117,30 @@ export type TStateLog<TState, TSelectedState> = {
  *
  * @property {string} cell - Name of the cell. Default: 'Unknown'
  * @property {TLogAction} action - Action.
- * @property {TStateLog} state - State to log.
+ * @property {TStateLogInfo} state - State to log.
  * @property {any} - Any metadata. E.g. when the subscribers are called then the subscriber function name is added in the metadata.
  */
-export type TLog<TStateLog, TMetaData> = {
+export type TLogInfo<TStateLogInfo, TMetaData> = {
   cell: string;
   action: TLogAction;
-  state: TStateLog;
+  state: TStateLogInfo;
   meta?: TMetaData;
 };
+
+/**
+ * Logs the action and its relative information.
+ *
+ * @param {string} cell - Name of the cell.
+ * @param {TLogAction} action - Action: "create" | "publish" | "subscribe" | "unsubscribe" | "notify" | "select" | "compare"
+ * @property {TStateLogInfo} state - State to log.
+ * @param {TMetaData} meta - Any metadata. E.g. when the subscribers are called then the subscriber function name is added in the metadata.
+ */
+export type TLog = <TState, TSelectedState, TMetaData>(
+  cell: string | undefined,
+  action: TLogAction,
+  state: TStateLogInfo<TState, TSelectedState>,
+  meta?: TMetaData
+) => void;
 
 export type TCell<TState> = {
   /**
@@ -142,3 +167,38 @@ export type TCell<TState> = {
    */
   state: () => TState;
 };
+
+/**
+ * A state selector hook to retrieve the state from a cell.
+ *
+ * @param {TCell} cell - An instance of the cell, whose state is to be read.
+ * @param {TSelector} selector - A selector function which will receive the complete state of the cell and needs to return the selected state.
+ * @param {TAreEqual} areEqual - An equality comparator function which will receive previous and next selected state. It can used to compare these states to decide if the state has changed. It needs to return a boolean value. True: Meaning the selected state has not changed. False: Meaning selected value has changed. If the equality comparator function not passed then it uses the comparator function configured in the configuration provider. If not configured in the configuration provider then it uses the default equality comparator.
+ * @returns {TSelectedState} Selected state.
+ */
+export type TUseGetState = <TState, TSelectedState>(
+  cell: TCell<TState>,
+  selector: TSelector<TState, TSelectedState>,
+  areEqual?: TAreEqual<TSelectedState>
+) => TSelectedState;
+
+/**
+ * A hook to update the state of the cell.
+ *
+ * @param {TCell} cell - An instance of the cell, whose state is to be updated.
+ * @returns {function} A function to update the state. This function needs to be passed a `reducer` function as a parameter. The `reducer` function receives the current state of the `cell` and it needs to return the updated state.
+ */
+export type TUseSetState = <TState>(
+  cell: TCell<TState>
+) => (reducer: TReducer<TState>) => void;
+
+/**
+ * Creates and returns a new cell object with publish & subscribe methods.
+ *
+ * @param {TState} initialState - Initial state to be set in the cell.
+ * @returns {Object} Cell.
+ */
+export type TCreateCell = <TState>(
+  initialState: TState,
+  config?: TCellConfiguration
+) => TCell<TState>;
