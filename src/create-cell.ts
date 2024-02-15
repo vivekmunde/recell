@@ -1,14 +1,11 @@
 import * as pusu from "pusu";
 import log from "./log";
 import {
-  TAreEqual,
   TCellConfiguration,
   TLogAction,
-  TStateLog,
-  TReducer,
-  TSelector,
-  TSubscriber,
-  TUnsubscribe,
+  TStateLogInfo,
+  TCell,
+  TCreateCell,
 } from "./types";
 
 /**
@@ -17,36 +14,10 @@ import {
  * @param {TState} initialState - Initial state to be set in the cell.
  * @returns {Object} Cell.
  */
-const createCell = <TState>(
+const createCell: TCreateCell = <TState>(
   initialState: TState,
   config?: TCellConfiguration
-): {
-  /**
-   * Updates the state in cell and calls all subscribers with the updated state.
-   *
-   * @param {TReducer} reducer - A reducer function which recieves the current state fo the cell and should return the updated state.
-   */
-  publish: (reducer: TReducer<TState>) => void;
-
-  /**
-   * Subscribes to the updates in the state of the cell.
-   *
-   * @param {TSubscriber} subscriber - A subscriber function to be called each time the state change is published. The subscriber function will recieve the data selected and returned by the selector function. If selector is not supplied then the subscruber function will receive the complete state.
-   * @param {TSelector} selector - A selector function to select the required state value(s) from the state and return the selected state.
-   * @param {TAreEqual} areEqual - An equality comparator function which receives previous and current selected state. This equality comparater function can be used to determine if the current selected state has changed from the previous selected state. If there is no change in the selected state then the subscribers will not be called. True: Meaning the selected state has not changed. False: Meaning the selected state has changed. If not passed then it uses the default comparator function (current, previous) => (current === previous).
-   * @returns {TUnsubscribe} An unsubscriber function, which when called unsubscribes the subscriber function from from the state updates.
-   */
-  subscribe: <TSelectedState>(
-    subscriber: TSubscriber<TSelectedState>,
-    selector?: TSelector<TState, TSelectedState>,
-    areEqual?: TAreEqual<TSelectedState>
-  ) => TUnsubscribe;
-
-  /**
-   * Returns the current state of the cell.
-   */
-  state: () => TState;
-} => {
+): TCell<TState> => {
   const _name = config?.name;
   const _loggingEnabled = config?.enableLogging;
 
@@ -62,7 +33,7 @@ const createCell = <TState>(
     meta?: TMetaData
   ) => {
     if (_loggingEnabled) {
-      const stateToLog: TStateLog<TState, TSelectedState> = {
+      const stateToLog: TStateLogInfo<TState, TSelectedState> = {
         current: currentState,
         previous: previousState,
         selected: selectedState,
